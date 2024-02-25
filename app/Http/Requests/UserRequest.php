@@ -23,6 +23,7 @@ class UserRequest extends FormRequest
      */
     public function rules(): array
     {
+        $userId = $this->route('user');
         return [
             'name' => [
                 'string',
@@ -33,7 +34,7 @@ class UserRequest extends FormRequest
             'email' => [
                 'email',
                 'required',
-                'unique:' . User::class
+                Rule::unique(User::class)->ignore($userId)
             ]
         ];
     }
