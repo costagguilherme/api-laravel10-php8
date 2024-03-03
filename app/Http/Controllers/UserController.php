@@ -5,51 +5,56 @@ namespace App\Http\Controllers;
 use App\Exceptions\NotFoundHttpException;
 use App\Http\Requests\UserRequest;
 use App\Models\User;
+use App\Repositories\UserRepositoryEloquent;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 
 class UserController extends Controller
 {
+
+    private UserRepositoryEloquent $userRepository;
+    public function __construct(UserRepositoryEloquent $userRepository)
+    {
+        $this->userRepository = $userRepository;
+    }
     public function index(): Response
     {
-        $users = User::all();
-        return $this->sendResponse($users->toArray());
+        $users = $this->userRepository->getAll();
+        return $this->sendResponse($users);
     }
 
     public function show(int $id): Response
     {
-        $user = User::where('id', $id)->first();
+        $user = $this->userRepository->getById($id);
         if (empty($user)) {
             throw new NotFoundHttpException('Usuário não encontrado');
         }
-        return $this->sendResponse($user->toArray());
+        return $this->sendResponse($user);
     }
 
     public function store(UserRequest $request): Response
     {
         $user = $request->validated();
-        $user = User::create($user);
-        return $this->sendResponse($user->toArray());
+        $user = $this->userRepository->create($user);
+        return $this->sendResponse($user);
     }
 
     public function update(UserRequest $request, int $id): Response
     {
-        $user = User::where('id', $id)->first();
+        $user = $this->userRepository->update($request->validated(), $id);
         if (empty($user)) {
             throw new NotFoundHttpException('Usuário não encontrado');
         }
-        $attributes = $request->validated();
-        $user->update($attributes);
-        return $this->sendResponse($user->toArray());
+
+        return $this->sendResponse($user);
     }
 
     public function destroy(int $id): Response
     {
-        $user = User::where('id', $id)->first();
+        $user = $this->userRepository->delete($id);
         if (empty($user)) {
             throw new NotFoundHttpException('Usuário não encontrado');
         }
-        $user->delete();
-        return $this->sendResponse($user->toArray());
+        return $this->sendResponse($user);
     }
 }
