@@ -2,9 +2,10 @@
 
 namespace App\Repositories;
 
+use App\Interfaces\IUserRepository;
 use App\Models\User;
 
-class UserRepositoryEloquent
+class UserRepositoryEloquent implements IUserRepository
 {
     public function getAll(): array
     {

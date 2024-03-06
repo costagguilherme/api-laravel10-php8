@@ -4,16 +4,16 @@ namespace App\Http\Controllers;
 
 use App\Exceptions\NotFoundHttpException;
 use App\Http\Requests\UserRequest;
+use App\Interfaces\IUserRepository;
 use App\Models\User;
-use App\Repositories\UserRepositoryEloquent;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 
 class UserController extends Controller
 {
 
-    private UserRepositoryEloquent $userRepository;
-    public function __construct(UserRepositoryEloquent $userRepository)
+    private IUserRepository $userRepository;
+    public function __construct(IUserRepository $userRepository)
     {
         $this->userRepository = $userRepository;
     }
