@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Exceptions\NotFoundHttpException;
+use App\Http\Requests\PostRequest;
 use App\Models\Post;
 use App\Models\User;
 use Illuminate\Http\Request;
@@ -26,14 +27,14 @@ class PostController extends Controller
         return $this->sendResponse($post->toArray());
     }
 
-    public function store(Request $request): Response
+    public function store(PostRequest $request): Response
     {
         $post = $request->all();
         $post = Post::create($post);
         return $this->sendResponse($post->toArray());
     }
 
-    public function update(Request $request, int $id): Response
+    public function update(PostRequest $request, int $id): Response
     {
         $post = Post::where('id', $id)->first();
         if (empty($post)) {
