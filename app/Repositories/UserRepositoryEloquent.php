@@ -9,13 +9,13 @@ class UserRepositoryEloquent implements IUserRepository
 {
     public function getAll(): array
     {
-        $users = User::all();
+        $users = User::with('posts')->get();
         return $users->toArray();
     }
 
     public function getById(int $id): array
     {
-        $user = User::where('id', $id)->first();
+        $user = User::with('posts')->where('id', $id)->first();
         return $user->toArray() ?? [];
     }
 
