@@ -4,73 +4,65 @@ namespace App\Http\Controllers;
 
 use App\Exceptions\NotFoundHttpException;
 use App\Http\Requests\PostRequest;
-use App\Models\Post;
-use App\Models\User;
+use App\Interfaces\IPostRepository;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
 
 class PostController extends Controller
 {
+    public function __construct(private IPostRepository $postRepository)
+    {
+    }
+
+
     public function index(): Response
     {
-        $posts = Post::with('user')->get();
-        return $this->sendResponse($posts->toArray());
+        $posts = $this->postRepository->getAll();
+        return $this->sendResponse($posts);
     }
 
     public function show(int $id): Response
     {
-        $post = Post::with('user')->where('id', $id)->first();
+        $post = $this->postRepository->getById($id);
         if (empty($post)) {
             throw new NotFoundHttpException('Post not found');
         }
-        return $this->sendResponse($post->toArray());
+        return $this->sendResponse($post);
     }
 
     public function store(PostRequest $request): Response
     {
-        $post = $request->all();
-        $post = Post::create($post);
-        return $this->sendResponse($post->toArray());
+        $post = $request->validated();
+        $post = $this->postRepository->create($post);
+        return $this->sendResponse($post);
     }
 
     public function update(PostRequest $request, int $id): Response
     {
-        $post = Post::where('id', $id)->first();
+        $post = $this->postRepository->update($request->validated(), $request->user_id, $id);
         if (empty($post)) {
             throw new NotFoundHttpException('Post not found');
         }
 
-        if (!($post->user_id == $request->user_id)) {
-            throw new BadRequestHttpException('Not possible update this post');
+        if (isset($post['error'])) {
+            throw new BadRequestHttpException($post['error']);
         }
 
-        $user = User::where('id', $request->user_id)->first();
-        if (empty($user)) {
-            throw new NotFoundHttpException('User not found');
-        }
-
-        $post->update($request->all());
-        return $this->sendResponse($post->toArray());
+        return $this->sendResponse($post);
     }
 
     public function destroy(Request $request, int $id): Response
     {
-        $post = Post::where('id', $id)->first();
+        $post = $this->postRepository->delete($id, $request->user_id);
         if (empty($post)) {
             throw new NotFoundHttpException('Post not found');
         }
 
-        if (!($post->user_id == $request->user_id)) {
-            throw new BadRequestHttpException('Not possible delete this post');
+        if (isset($post['error'])) {
+            throw new BadRequestHttpException($post['error']);
         }
 
-        $user = User::where('id', $request->user_id)->first();
-        if (empty($user)) {
-            throw new NotFoundHttpException('User not found');
-        }
-
-        $post->delete();
-        return $this->sendResponse($post->toArray());
+        return $this->sendResponse($post);
     }
 }
