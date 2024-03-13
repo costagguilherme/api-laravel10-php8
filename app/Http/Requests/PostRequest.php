@@ -39,6 +39,9 @@ class PostRequest extends FormRequest
             ],
             'image_url' => [
                 'url'
+            ],
+            'categories' => [
+                'array'
             ]
         ];
     }

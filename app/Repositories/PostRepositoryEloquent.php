@@ -9,23 +9,26 @@ class PostRepositoryEloquent implements IPostRepository
 {
     public function getAll(): array
     {
-        $posts = Post::with('user')->get();
+        $posts = Post::with('user', 'categories')->get();
         return $posts->toArray();
     }
 
     public function getById(int $id): array
     {
-        $post = Post::with('user')->where('id', $id)->first();
+        $post = Post::with('user', 'categories')->where('id', $id)->first();
         return $post->toArray() ?? [];
     }
 
     public function create(array $data): array
     {
         $post = Post::create($data);
+        if (isset($data['categories'])) {
+            $post->categories()->attach($data['categories']);
+        }
         return $post->toArray();
     }
 
-    public function update(array $attributes, int $userId, int $id): array
+    public function update(array $data, int $userId, int $id): array
     {
         $post = Post::where('id', $id)->first();
         if (empty($post)) {
@@ -36,7 +39,11 @@ class PostRepositoryEloquent implements IPostRepository
             return ['error' => 'Not possible update this post'];
         }
 
-        $post->update($attributes);
+        if (isset($data['categories'])) {
+            $post->categories()->sync($data['categories']);
+        }
+
+        $post->update($data);
         return $post->toArray();
     }
 
