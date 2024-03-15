@@ -4,9 +4,17 @@ namespace App\Repositories;
 
 use App\Interfaces\IUserRepository;
 use App\Models\User;
+use Illuminate\Support\Str;
 
 class UserRepositoryEloquent implements IUserRepository
 {
+
+    public function createAuthToken(int $userId): string
+    {
+        $user = User::where('id', $userId)->first();
+        $token = $user->createToken(Str::random(10), ['*'], now()->addWeek());
+        return $token->plainTextToken;
+    }
     public function getAll(): array
     {
         $users = User::with('posts')->get();
@@ -16,7 +24,7 @@ class UserRepositoryEloquent implements IUserRepository
     public function getById(int $id): array
     {
         $user = User::with('posts')->where('id', $id)->first();
-        return $user->toArray() ?? [];
+        return $user?->toArray() ?? [];
     }
 
     public function create(array $data): array

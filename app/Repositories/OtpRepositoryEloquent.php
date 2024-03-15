@@ -24,4 +24,22 @@ class OtpRepositoryEloquent implements IOtpRepository
         return $otp->toArray();
     }
 
+    public function verify(int $userId, string $otp, string $event): bool
+    {
+        $datetime = new \DateTime();
+
+        $otp = Otp::where('otp', $otp)
+            ->where('user_id', $userId)
+            ->where('event', $event)
+            ->where('available_until', '>=', $datetime->format('Y-m-d H:i:s'))
+            ->first();
+
+        if (empty($otp)) {
+            return false;
+        }
+
+        $otp->delete();
+        return true;
+    }
+
 }

@@ -4,17 +4,28 @@ namespace App\Http\Controllers;
 
 use App\Http\Requests\OtpRequest;
 use App\Interfaces\IOtpRepository;
+use App\Interfaces\IUserRepository;
+use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 
 class OtpController extends Controller
 {
 
-    public function __construct(private IOtpRepository $otpRepository)
-    {}
+    public function __construct(
+        private IOtpRepository $otpRepository,
+        private IUserRepository $userRepository
+    ) {
+    }
     public function store(OtpRequest $request): Response
     {
         $data = $request->validated();
         $otp = $this->otpRepository->create($data['user_id'], $data['event']);
         return $this->sendResponse($otp, 'OTP gerado com sucesso');
+    }
+
+    public function login(Request $request) : Response
+    {
+        $token = $this->userRepository->createAuthToken($request->user_id);
+        return response(['token' => $token]);
     }
 }

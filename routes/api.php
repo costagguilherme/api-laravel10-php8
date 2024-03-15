@@ -22,22 +22,28 @@ use Illuminate\Support\Facades\Route;
 //     return $request->user();
 // });
 
-Route::group(['prefix' => 'otps'], function () {
+
+Route::group(['prefix' => 'otp'], function () {
     Route::post('', [OtpController::class, 'store']);
+    Route::post('login', [OtpController::class, 'login'])->middleware('otp:login');
 
 });
 
 Route::apiResource('/users', UserController::class);
-Route::group(['prefix' => 'posts'], function () {
-    Route::get('', [PostController::class, 'index']);
-    Route::get('/{id}', [PostController::class, 'show']);
-    Route::post('', [PostController::class, 'store']);
-    Route::put('/{id}', [PostController::class, 'update']);
-    Route::delete('/{id}', [PostController::class, 'destroy']);
-});
 
-Route::group(['prefix' => 'comments'], function () {
-    Route::get('', [CommentController::class, 'index']);
-    Route::post('', [CommentController::class, 'store']);
+
+Route::middleware('auth:sanctum')->group(function () {
+    Route::group(['prefix' => 'posts'], function () {
+        Route::get('', [PostController::class, 'index']);
+        Route::get('/{id}', [PostController::class, 'show']);
+        Route::post('', [PostController::class, 'store']);
+        Route::put('/{id}', [PostController::class, 'update']);
+        Route::delete('/{id}', [PostController::class, 'destroy']);
+    });
+
+    Route::group(['prefix' => 'comments'], function () {
+        Route::get('', [CommentController::class, 'index']);
+        Route::post('', [CommentController::class, 'store']);
+    });
 });
 
