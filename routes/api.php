@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\CommentController;
+use App\Http\Controllers\OtpController;
 use App\Http\Controllers\PostController;
 use App\Http\Controllers\UserController;
 use Illuminate\Http\Request;
@@ -21,6 +22,10 @@ use Illuminate\Support\Facades\Route;
 //     return $request->user();
 // });
 
+Route::group(['prefix' => 'otps'], function () {
+    Route::post('', [OtpController::class, 'store']);
+
+});
 
 Route::apiResource('/users', UserController::class);
 Route::group(['prefix' => 'posts'], function () {
