@@ -32,7 +32,7 @@ Route::group(['prefix' => 'otp'], function () {
 Route::apiResource('/users', UserController::class);
 
 
-Route::middleware('auth:sanctum')->group(function () {
+Route::middleware(['auth:sanctum', 'set_user'])->group(function () {
     Route::group(['prefix' => 'posts'], function () {
         Route::get('', [PostController::class, 'index']);
         Route::get('/{id}', [PostController::class, 'show']);
