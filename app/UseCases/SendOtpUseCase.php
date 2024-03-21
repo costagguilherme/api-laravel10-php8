@@ -3,6 +3,7 @@
 namespace App\UseCases;
 
 use App\Interfaces\IUserRepository;
+use App\Jobs\SendOtpEmailJob;
 use App\Mail\SendOtpEmail;
 use Illuminate\Support\Facades\Mail;
 
@@ -16,7 +17,7 @@ class SendOtpUseCase
     {
         $user = $this->userRepository->getById($userId);
         if ($method == 'email') {
-            Mail::to($user['email'])->send(new SendOtpEmail($otp));
+           SendOtpEmailJob::dispatch($otp, $user['email']);
         }
     }
 }

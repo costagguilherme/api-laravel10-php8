@@ -18,23 +18,23 @@ class SendOtpEmail extends Mailable
     {
     }
 
-    /**
-     * Get the message envelope.
-     */
-    public function envelope(): Envelope
+    public function build()
     {
-        return new Envelope(
-            subject: 'Send Otp Email',
-        );
+        $this->subject('Seu OTP')->view('send_email');
     }
 
-    /**
-     * Get the message content definition.
-     */
-    public function content(): Content
-    {
-        return new Content(
-            view: 'send_email',
-        );
-    }
+
+    // public function envelope(): Envelope
+    // {
+    //     return new Envelope(
+    //         subject: 'Send Otp Email',
+    //     );
+    // }
+
+    // public function content(): Content
+    // {
+    //     return new Content(
+    //         view: 'send_email',
+    //     );
+    // }
 }
