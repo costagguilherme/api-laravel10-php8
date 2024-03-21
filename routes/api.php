@@ -29,7 +29,16 @@ Route::group(['prefix' => 'otp'], function () {
 
 });
 
-Route::apiResource('/users', UserController::class);
+Route::group(['prefix' => 'users'], function () {
+    Route::get('', [UserController::class, 'index']);
+    Route::get('/{id}', [UserController::class, 'show']);
+    Route::post('', [UserController::class, 'store']);
+
+    Route::middleware(['auth:sanctum', 'set_user'])->group(function () {
+        Route::put('', [UserController::class, 'update']);
+        Route::delete('', [UserController::class, 'destroy']);
+    });
+});
 
 
 Route::middleware(['auth:sanctum', 'set_user'])->group(function () {

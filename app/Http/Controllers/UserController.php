@@ -39,9 +39,9 @@ class UserController extends Controller
         return $this->sendResponse($user);
     }
 
-    public function update(UserRequest $request, int $id): Response
+    public function update(UserRequest $request): Response
     {
-        $user = $this->userRepository->update($request->validated(), $id);
+        $user = $this->userRepository->update($request->validated(), $request->user_id);
         if (empty($user)) {
             throw new NotFoundHttpException('Usuário não encontrado');
         }
@@ -49,9 +49,9 @@ class UserController extends Controller
         return $this->sendResponse($user);
     }
 
-    public function destroy(int $id): Response
+    public function destroy(Request $request): Response
     {
-        $user = $this->userRepository->delete($id);
+        $user = $this->userRepository->delete($request->user_id);
         if (empty($user)) {
             throw new NotFoundHttpException('Usuário não encontrado');
         }
